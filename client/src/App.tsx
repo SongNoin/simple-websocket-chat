@@ -1,24 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import io from "socket.io-client";
+import "./App.css";
+import { useState } from "react";
 
 function App() {
+  const socket = io("http://localhost:3000");
+  const [requestText, setRequestText] = useState("");
+
+  socket.on("test", (socket) => {
+    console.log("소켓", socket);
+  });
+
+  const handleRequestSocket = () => {
+    socket.emit("test", {
+      data: requestText,
+    });
+  };
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setRequestText(e.target.value);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      소켓 연결 테스트
+      <button onClick={handleRequestSocket}>Request</button>
+      <input type="text" onChange={(e) => handleChange(e)} />
     </div>
   );
 }
